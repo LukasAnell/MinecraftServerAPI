@@ -1,5 +1,6 @@
 package com.example.minecraftserverapi
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -15,7 +16,8 @@ import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var serverStatus:ServerStatus
+    private lateinit var serverStatus: ServerStatus
+    private var serverStatusList = arrayListOf<ServerStatus>()
 
     companion object {
         const val TAG = "MainActivity"
@@ -29,11 +31,11 @@ class MainActivity : AppCompatActivity() {
         setListeners()
     }
 
-    private fun getJson(address: String, isBedrock: Boolean) {
+    private fun getStatus(address: String, isBedrock: Boolean) {
         val retrofit = RetrofitHelper.getInstance()
         val earthquakeService = retrofit.create(ServerService::class.java)
-        val earthquakeCall = if (isBedrock) earthquakeService.getBedrockMcServerInfo(address) else earthquakeService.getJavaMcServerInfo(address)
-        earthquakeCall.enqueue(object: Callback<ServerStatus> {
+        val serverCall = if (isBedrock) earthquakeService.getBedrockMcServerInfo(address) else earthquakeService.getJavaMcServerInfo(address)
+        serverCall.enqueue(object: Callback<ServerStatus> {
             override fun onResponse(
                 call: Call<ServerStatus>,
                 response: Response<ServerStatus>
@@ -43,13 +45,25 @@ class MainActivity : AppCompatActivity() {
                 // don't forget a null check before trying to use the data
                 // response.body() contains the object in the <> after response
                 serverStatus = response.body()!!
-                Log.d(TAG, serverStatus.toString())
+                if(serverStatus.online) {
+                    serverStatusList.add(serverStatus)
+                    Log.d(TAG, "serverStatusList: $serverStatusList")
+                }
+
+                sendData()
             }
 
             override fun onFailure(call: Call<ServerStatus>, t: Throwable) {
                 Log.d(TAG, "onFailure: ${t.message}\n${t.stackTrace}")
             }
         })
+    }
+
+    private fun sendData() {
+        val intent = Intent(this, ServerListActivity::class.java)
+
+        intent.putExtra(ServerListActivity.EXTRA_SERVER_LIST, serverStatusList)
+        startActivity(intent)
     }
 
     private fun setListeners() {
@@ -64,8 +78,8 @@ class MainActivity : AppCompatActivity() {
                 val isIpValid = Patterns.IP_ADDRESS.matcher(inputAddress).matches()
                 val isPortValid = if(inputPort.isEmpty()) true else inputPort.toInt() in 1..65535
 
-                Log.d(TAG, "IP is valid: $isIpValid")
-                Log.d(TAG, "port is valid: $isPortValid")
+                Log.d(TAG, "IP isValid: $isIpValid")
+                Log.d(TAG, "port isValid: $isPortValid")
 
                 if(!isIpValid) {
                     Toast.makeText(this, "You must input a valid server address!", Toast.LENGTH_SHORT).show()
@@ -78,11 +92,22 @@ class MainActivity : AppCompatActivity() {
 
                 if(inputPort.isNotEmpty()) {
                     inputPort = ":$inputPort"
+                    getStatus("$inputAddress$inputPort", binding.switchMainIsBedrock.isActivated)
+                } else {
+                    // loopThroughPorts(inputAddress, binding.switchMainIsBedrock.isActivated)
                 }
-                // maybe check all ips and list out different valid servers on that range
-                // if none, then say so
-                getJson("$inputAddress$inputPort", binding.switchMainIsBedrock.isActivated)
             }
         }
     }
+
+    /*
+    private fun loopThroughPorts(ip: String, isBedrock: Boolean) {
+        for (i in 1..65535) {
+            getStatus("$ip:$i", isBedrock)
+            if (serverStatus.online) {
+                serverStatusList.add(serverStatus)
+            }
+        }
+    }
+     */
 }
