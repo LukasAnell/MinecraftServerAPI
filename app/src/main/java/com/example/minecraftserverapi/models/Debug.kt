@@ -1,5 +1,9 @@
 package com.example.minecraftserverapi.models
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Debug(
     var ping: Boolean,
     var query: Boolean,
@@ -12,4 +16,4 @@ data class Debug(
     var cachetime: Long,
     var cacheexpire: Long,
     var apiversion: Int
-)
+): Parcelable

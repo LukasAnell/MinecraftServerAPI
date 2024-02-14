@@ -9,6 +9,7 @@ import android.widget.Toast
 import com.example.minecraftserverapi.api.ServerService
 import com.example.minecraftserverapi.api.RetrofitHelper
 import com.example.minecraftserverapi.databinding.ActivityMainBinding
+import com.example.minecraftserverapi.models.Info
 import com.example.minecraftserverapi.models.ServerStatus
 import retrofit2.Call
 import retrofit2.Callback
@@ -45,10 +46,13 @@ class MainActivity : AppCompatActivity() {
                 // don't forget a null check before trying to use the data
                 // response.body() contains the object in the <> after response
                 serverStatus = response.body()!!
+                checkNull()
+                // 162.55.135.136
                 if(serverStatus.online) {
                     serverStatusList.add(serverStatus)
                     Log.d(TAG, "serverStatusList: $serverStatusList")
                 }
+                Log.d(TAG, "hostname: ${serverStatus.hostname}")
 
                 sendData()
             }
@@ -59,10 +63,25 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    private fun checkNull() {
+        if(serverStatus.players.list == null) {
+            serverStatus.players.list = listOf()
+        }
+        if(serverStatus.plugins == null) {
+            serverStatus.plugins = listOf()
+        }
+        if(serverStatus.mods == null) {
+            serverStatus.mods = listOf()
+        }
+        if(serverStatus.info == null) {
+            serverStatus.info = Info(listOf(), listOf(), listOf())
+        }
+    }
+
     private fun sendData() {
         val intent = Intent(this, ServerListActivity::class.java)
 
-        intent.putExtra(ServerListActivity.EXTRA_SERVER_LIST, serverStatusList)
+        intent.putExtra(ServerListActivity.EXTRA_SERVER, serverStatusList)
         startActivity(intent)
     }
 
