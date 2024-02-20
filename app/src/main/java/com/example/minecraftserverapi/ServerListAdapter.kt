@@ -1,7 +1,10 @@
 package com.example.minecraftserverapi
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
+import android.text.Html
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +18,10 @@ import java.util.Base64
 
 
 class ServerListAdapter(private var serverStatusList: List<ServerStatus>): RecyclerView.Adapter<ServerListAdapter.ViewHolder>() {
+    companion object {
+        val TAG = "ServerListAdapter"
+    }
+
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val ipAndPortTextView: TextView
         val versionTextView: TextView
@@ -46,8 +53,10 @@ class ServerListAdapter(private var serverStatusList: List<ServerStatus>): Recyc
         val name = server.hostname?.ifEmpty { "Minecraft Server" }
         val ipAndPort = "${server.ip}:${server.port}"
         val version = server.version
-        val iconBase64 = server.icon.split(",").get(1)
-        val motd = server.motd.toString()
+        val iconBase64 = server.icon.split(",")[1]
+        val tempMotd = server.motd.html!!.joinToString("<br>")
+        Log.d(TAG, tempMotd)
+        val motd = Html.fromHtml(tempMotd)
         val onlineCount = "${server.players.online}/${server.players.max}"
 
         viewHolder.versionTextView.text = version
@@ -57,9 +66,7 @@ class ServerListAdapter(private var serverStatusList: List<ServerStatus>): Recyc
 
         val decodedString: ByteArray = Base64.getDecoder().decode(iconBase64)
         val decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
-        mImageView.setImageBitmap(decodedByte)
-
-        viewHolder.iconImageView.drawable
+        viewHolder.iconImageView.setImageBitmap(Bitmap.createScaledBitmap(decodedByte, 256, 256, false))
     }
 
     override fun getItemCount() = serverStatusList.size

@@ -14,7 +14,7 @@ data class ServerStatus(
     var protocol: Protocol,
     var icon: String,
     var software: String? = "",
-    var map: Map,
+    var map: Map? = null,
     var gamemode: String? = "",
     var serverid: String? = "",
     var eula_blocked: Boolean,

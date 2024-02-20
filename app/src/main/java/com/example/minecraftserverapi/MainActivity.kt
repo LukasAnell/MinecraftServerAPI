@@ -113,6 +113,7 @@ class MainActivity : AppCompatActivity() {
                     inputPort = ":$inputPort"
                     getStatus("$inputAddress$inputPort", binding.switchMainIsBedrock.isActivated)
                 } else {
+                    getStatus(inputAddress, binding.switchMainIsBedrock.isActivated)
                     // loopThroughPorts(inputAddress, binding.switchMainIsBedrock.isActivated)
                 }
             }
