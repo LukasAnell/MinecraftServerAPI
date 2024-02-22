@@ -1,5 +1,6 @@
 package com.example.minecraftserverapi
 
+import android.content.Intent
 import android.os.Build
 import java.util.ArrayList
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +30,15 @@ class ServerListActivity : AppCompatActivity() {
         serverStatusList = intent.getParcelableArrayListExtra(EXTRA_SERVER)!!
         Log.d(TAG, "serverStatusList: $serverStatusList")
         refreshList()
+        createListeners()
+    }
+
+    private fun createListeners() {
+        binding.buttonServerListBack.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+
+            startActivity(intent)
+        }
     }
 
     private fun refreshList() {

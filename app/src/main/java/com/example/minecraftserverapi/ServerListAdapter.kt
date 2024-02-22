@@ -1,5 +1,6 @@
 package com.example.minecraftserverapi
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
@@ -50,23 +51,29 @@ class ServerListAdapter(private var serverStatusList: List<ServerStatus>): Recyc
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val context = viewHolder.layout.context
         val server = serverStatusList[position]
-        val name = server.hostname?.ifEmpty { "Minecraft Server" }
+        val name = if (server.hostname == null) "Minecraft Server" else server.hostname
         val ipAndPort = "${server.ip}:${server.port}"
         val version = server.version
         val iconBase64 = server.icon.split(",")[1]
-        val tempMotd = server.motd.html!!.joinToString("<br>")
-        Log.d(TAG, tempMotd)
-        val motd = Html.fromHtml(tempMotd)
+        val motd = Html.fromHtml(server.motd.html!!.joinToString("<br>"))
         val onlineCount = "${server.players.online}/${server.players.max}"
 
         viewHolder.versionTextView.text = version
         viewHolder.motdTextView.text = motd
         viewHolder.onlineCountTextView.text = onlineCount
         viewHolder.ipAndPortTextView.text = ipAndPort
+        viewHolder.nameTextView.text = name
 
         val decodedString: ByteArray = Base64.getDecoder().decode(iconBase64)
         val decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
         viewHolder.iconImageView.setImageBitmap(Bitmap.createScaledBitmap(decodedByte, 256, 256, false))
+
+        viewHolder.layout.setOnClickListener {
+            val intent = Intent(context, ServerInfoActivity::class.java)
+            intent.putExtra(ServerInfoActivity.EXTRA_SERVER, server)
+
+            context.startActivity(intent)
+        }
     }
 
     override fun getItemCount() = serverStatusList.size
