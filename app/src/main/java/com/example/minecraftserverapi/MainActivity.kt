@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
                 // response.body() contains the object in the <> after response
                 serverStatus = response.body()!!
                 checkNull()
-                // 162.55.135.136
+                // 46.4.159.120
                 if(serverStatus.online) {
                     serverStatusList.add(serverStatus)
                     Log.d(TAG, "serverStatusList: $serverStatusList")
@@ -114,20 +114,8 @@ class MainActivity : AppCompatActivity() {
                     getStatus("$inputAddress$inputPort", binding.switchMainIsBedrock.isActivated)
                 } else {
                     getStatus(inputAddress, binding.switchMainIsBedrock.isActivated)
-                    // loopThroughPorts(inputAddress, binding.switchMainIsBedrock.isActivated)
                 }
             }
         }
     }
-
-    /*
-    private fun loopThroughPorts(ip: String, isBedrock: Boolean) {
-        for (i in 1..65535) {
-            getStatus("$ip:$i", isBedrock)
-            if (serverStatus.online) {
-                serverStatusList.add(serverStatus)
-            }
-        }
-    }
-     */
 }
