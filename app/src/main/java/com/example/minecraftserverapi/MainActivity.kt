@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
+import android.webkit.URLUtil
 import android.widget.Toast
 import com.example.minecraftserverapi.api.ServerService
 import com.example.minecraftserverapi.api.RetrofitHelper
@@ -46,9 +47,10 @@ class MainActivity : AppCompatActivity() {
                 // don't forget a null check before trying to use the data
                 // response.body() contains the object in the <> after response
                 serverStatus = response.body()!!
-                checkNull()
+                // checkNull()
                 // 46.4.159.120
-                if(serverStatus.online) {
+                Log.d(TAG, "Ping: ${serverStatus.debug.ping}")
+                if(serverStatus.debug.ping) {
                     serverStatusList.add(serverStatus)
                     Log.d(TAG, "serverStatusList: $serverStatusList")
                 }
@@ -63,6 +65,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    /*
     private fun checkNull() {
         if(serverStatus.players.list == null) {
             serverStatus.players.list = listOf()
@@ -77,6 +80,8 @@ class MainActivity : AppCompatActivity() {
             serverStatus.info = Info(listOf(), listOf(), listOf())
         }
     }
+
+     */
 
     private fun sendData() {
         val intent = Intent(this, ServerListActivity::class.java)
@@ -94,7 +99,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "You must input a server address!", Toast.LENGTH_SHORT).show()
             } else {
                 // check if is valid IP address
-                val isIpValid = Patterns.IP_ADDRESS.matcher(inputAddress).matches()
+                val isIpValid = Patterns.WEB_URL.matcher(inputAddress).matches() || Patterns.IP_ADDRESS.matcher(inputAddress).matches()
                 val isPortValid = if(inputPort.isEmpty()) true else inputPort.toInt() in 1..65535
 
                 Log.d(TAG, "IP isValid: $isIpValid")

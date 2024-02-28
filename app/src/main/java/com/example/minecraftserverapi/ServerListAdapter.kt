@@ -53,7 +53,7 @@ class ServerListAdapter(private var serverStatusList: List<ServerStatus>): Recyc
         val server = serverStatusList[position]
         val name = if (server.hostname == null) "Minecraft Server" else server.hostname
         val ipAndPort = "${server.ip}:${server.port}"
-        val version = server.version
+        val version = server.protocol.name
         val iconBase64 = server.icon.split(",")[1]
         val motd = Html.fromHtml(server.motd.html!!.joinToString("<br>"))
         val onlineCount = "${server.players.online}/${server.players.max}"

@@ -1,5 +1,6 @@
 package com.example.minecraftserverapi
 
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,9 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.minecraftserverapi.models.Players
+import com.squareup.picasso.Picasso
+import java.net.URL
+
 
 class PlayerInfoAdapter(private var playerList: Players): RecyclerView.Adapter<PlayerInfoAdapter.ViewHolder>() {
     companion object {
@@ -38,8 +42,10 @@ class PlayerInfoAdapter(private var playerList: Players): RecyclerView.Adapter<P
         val player = playerList.list?.get(position)!!
         val name = player.name
         val uuid = player.uuid
-        // TODO: get from another api
-        // val skin =
+        Picasso.get()
+            .load("https://crafatar.com/avatars/$uuid")
+            .resize(128, 128)
+            .into(viewHolder.skinImageView)
 
         viewHolder.nameTextView.text = name
         viewHolder.uuidTextView.text = uuid
