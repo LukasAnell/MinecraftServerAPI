@@ -41,7 +41,10 @@ class ServerInfoActivity : AppCompatActivity() {
         val decodedString: ByteArray = Base64.getDecoder().decode(iconBase64)
         val decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
         binding.imageViewServerInfoLogo.setImageBitmap(Bitmap.createScaledBitmap(decodedByte, 256, 256, false))
-        refreshList()
+
+        if(server.players.list != null) {
+            refreshList()
+        }
 
         binding.buttonServerInfoBack.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)

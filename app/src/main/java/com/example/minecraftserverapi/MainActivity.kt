@@ -52,11 +52,12 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "Ping: ${serverStatus.debug.ping}")
                 if(serverStatus.debug.ping) {
                     serverStatusList.add(serverStatus)
+                    sendData()
                     Log.d(TAG, "serverStatusList: $serverStatusList")
+                } else {
+                    Toast.makeText(this@MainActivity, "No Minecraft Server exists for this IP/Port.", Toast.LENGTH_SHORT).show()
                 }
                 Log.d(TAG, "hostname: ${serverStatus.hostname}")
-
-                sendData()
             }
 
             override fun onFailure(call: Call<ServerStatus>, t: Throwable) {
