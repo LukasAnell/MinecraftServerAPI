@@ -5,12 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
-import android.webkit.URLUtil
 import android.widget.Toast
 import com.example.minecraftserverapi.api.ServerService
 import com.example.minecraftserverapi.api.RetrofitHelper
 import com.example.minecraftserverapi.databinding.ActivityMainBinding
-import com.example.minecraftserverapi.models.Info
 import com.example.minecraftserverapi.models.ServerStatus
 import retrofit2.Call
 import retrofit2.Callback
@@ -31,12 +29,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setListeners()
+
     }
 
     private fun getStatus(address: String, isBedrock: Boolean) {
         val retrofit = RetrofitHelper.getInstance()
-        val earthquakeService = retrofit.create(ServerService::class.java)
-        val serverCall = if (isBedrock) earthquakeService.getBedrockMcServerInfo(address) else earthquakeService.getJavaMcServerInfo(address)
+        val serverService = retrofit.create(ServerService::class.java)
+        val serverCall = if (isBedrock) serverService.getBedrockMcServerInfo(address) else serverService.getJavaMcServerInfo(address)
         serverCall.enqueue(object: Callback<ServerStatus> {
             override fun onResponse(
                 call: Call<ServerStatus>,
@@ -65,24 +64,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
-
-    /*
-    private fun checkNull() {
-        if(serverStatus.players.list == null) {
-            serverStatus.players.list = listOf()
-        }
-        if(serverStatus.plugins == null) {
-            serverStatus.plugins = listOf()
-        }
-        if(serverStatus.mods == null) {
-            serverStatus.mods = listOf()
-        }
-        if(serverStatus.info == null) {
-            serverStatus.info = Info(listOf(), listOf(), listOf())
-        }
-    }
-
-     */
 
     private fun sendData() {
         val intent = Intent(this, ServerListActivity::class.java)
