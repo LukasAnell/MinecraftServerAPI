@@ -1,5 +1,6 @@
 package com.example.minecraftserverapi
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -22,6 +23,7 @@ class ServerInfoActivity : AppCompatActivity() {
         const val TAG = "ServerInfoActivity"
         const val EXTRA_SERVER = "server"
     }
+    @SuppressLint("SetTextI18n")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
